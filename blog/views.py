@@ -1,8 +1,10 @@
-from django.http import HttpResponse
 from django.shortcuts import render
 
+from .models import Post
+
 def index(request):
+    # - 代表逆序
+    post_list = Post.objects.all().order_by('-created_time')
     return render(request, 'blog/index.html', context={
-        'title': '我的博客',
-        'welcome': '欢迎来到我的博客首页'
+        'post_list': post_list,
     })
