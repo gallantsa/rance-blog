@@ -14,6 +14,9 @@ class Category(models.Model):
     """
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.name
+
 
 class Tag(models.Model):
     """
@@ -21,6 +24,9 @@ class Tag(models.Model):
     再次强调一定要继承 models.Model 类！
     """
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Post(models.Model):
@@ -64,3 +70,5 @@ class Post(models.Model):
     # Category 类似。
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.title
