@@ -68,5 +68,5 @@ yarn.lock
 
 # Others
 celerybeat-schedule
-
+_credentials.py
 
