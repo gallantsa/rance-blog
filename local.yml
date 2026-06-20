@@ -1,0 +1,19 @@
+version: '3'
+
+volumes:
+  database_local:
+
+services:
+  rance-blog:
+    build:
+      context: .
+      dockerfile: ./compose/local/Dockerfile
+    image: rance-blog
+    container_name: rance-blog
+    working_dir: /app
+    volumes:
+      - database_local:/app/database
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: /start.sh

@@ -69,4 +69,7 @@ yarn.lock
 # Others
 celerybeat-schedule
 _credentials.py
+.production
 
+# 静态文件收集目录（collectstatic 输出）
+static/

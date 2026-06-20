@@ -6,4 +6,6 @@ dependencies = [
     "django>=5.2,<6.0",
     "markdown>=3.10.2",
     "gunicorn>=23.0",
+    "invoke>=3.0.3",
+    "fab-classic>=1.21.0",
 ]
