@@ -4,6 +4,26 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
+import re
+from django.utils.functional import cached_property
+from django.utils.text import slugify
+from markdown.extensions.toc import TocExtension
+
+
+def generate_rich_content(value):
+    md = markdown.Markdown(
+        extensions=[
+            "markdown.extensions.extra",
+            "markdown.extensions.codehilite",
+            # 记得在顶部引入 TocExtension 和 slugify
+            TocExtension(slugify=slugify),
+        ]
+    )
+    content = md.convert(value)
+    m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
+    toc = m.group(1) if m is not None else ""
+    return {"content": content, "toc": toc}
+
 
 
 class Category(models.Model):
@@ -16,10 +36,10 @@ class Category(models.Model):
     django 内置的全部类型可查看文档：
     https://docs.djangoproject.com/en/2.2/ref/models/fields/#field-types
     """
-    name = models.CharField(max_length=100)
+    name = models.CharField("分类名", max_length=100)
 
     class Meta:
-        verbose_name = '分类'
+        verbose_name = "分类"
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -31,10 +51,10 @@ class Tag(models.Model):
     标签 Tag 也比较简单，和 Category 一样。
     再次强调一定要继承 models.Model 类！
     """
-    name = models.CharField(max_length=100)
+    name = models.CharField("标签名", max_length=100)
 
     class Meta:
-        verbose_name = '标签'
+        verbose_name = "标签"
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -91,8 +111,8 @@ class Post(models.Model):
         # 首先实例化一个 Markdown 类，用于渲染 body 的文本。
         # 由于摘要并不需要生成文章目录，所以去掉了目录拓展。
         md = markdown.Markdown(extensions=[
-            'markdown.extensions.extra',
-            'markdown.extensions.codehilite',
+            "markdown.extensions.extra",
+            "markdown.extensions.codehilite",
         ])
 
         # 先将 Markdown 文本渲染成 HTML 文本
@@ -103,18 +123,31 @@ class Post(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        verbose_name = '文章'
+        verbose_name = "文章"
         verbose_name_plural = verbose_name
-        ordering = ['-created_time']
+        ordering = ["-created_time"]
 
     # 自定义 get_absolute_url 方法
     # 记得从 django.urls 中导入 reverse 函数
     def get_absolute_url(self):
-        return reverse('blog:detail', kwargs={'pk': self.pk})
+        return reverse("blog:detail", kwargs={"pk": self.pk})
 
     def increase_views(self):
         self.views += 1
-        self.save(update_fields=['views'])
+        self.save(update_fields=["views"])
+
+    @property
+    def toc(self):
+        return self.rich_content.get("toc", "")
+
+    @property
+    def body_html(self):
+        return self.rich_content.get("content", "")
+
+    @cached_property
+    def rich_content(self):
+        return generate_rich_content(self.body)
+
 
 
     def __str__(self):

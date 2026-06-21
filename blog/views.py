@@ -4,12 +4,8 @@ if not hasattr(collections, 'Iterable'):
     import collections.abc
     collections.Iterable = collections.abc.Iterable
 
-import markdown
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView
-import re
-from django.utils.text import slugify
-from markdown.extensions.toc import TocExtension
 from pure_pagination.mixins import PaginationMixin
 
 from .models import Post, Category, Tag
@@ -41,28 +37,15 @@ class PostDetailView(DetailView):
         # 视图必须返回一个 HttpResponse 对象
         return response
 
-    def get_object(self, queryset=None):
-        # 覆写 get_object 方法的目的是因为需要对 post 的 body 值进行渲染
-        post = super().get_object(queryset=None)
-        md = markdown.Markdown(extensions=[
-            'markdown.extensions.extra',
-            'markdown.extensions.codehilite',
-            # 记得在顶部引入 TocExtension 和 slugify
-            TocExtension(slugify=slugify),
-        ])
-        post.body = md.convert(post.body)
-
-        m = re.search(r'<div class="toc">\s*<ul>(.*)</ul>\s*</div>', md.toc, re.S)
-        post.toc = m.group(1) if m is not None else ''
-
-        return post
-
 class ArchiveView(IndexView):
     def get_queryset(self):
-        year = self.kwargs.get('year')
-        month = self.kwargs.get('month')
-        return super().get_queryset().filter(created_time__year=year,
-                                             created_time__month=month)
+        year = self.kwargs.get("year")
+        month = self.kwargs.get("month")
+        return (
+            super()
+            .get_queryset()
+            .filter(created_time__year=year, created_time__month=month)
+        )
 
 class CategoryView(IndexView):
 
