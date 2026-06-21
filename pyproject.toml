@@ -8,4 +8,5 @@ dependencies = [
     "gunicorn>=23.0",
     "invoke>=3.0.3",
     "fab-classic>=1.21.0",
+    "faker>=40.23.0",
 ]
