@@ -160,6 +160,12 @@ wheels = [
 ]
 
 [[package]]
+name = "django-pure-pagination"
+version = "0.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/55/43/50c475f408d3350cec340855970a5ce02ea12f5a53d520315f200b4847a1/django-pure-pagination-0.3.0.tar.gz", hash = "sha256:02b42561b8afb09f1fb6ac6dc81db13374f5f748640f31c8160a374274b54713", size = 10857, upload-time = "2015-12-26T22:50:50.607Z" }
+
+[[package]]
 name = "fab-classic"
 version = "1.21.0"
 source = { registry = "https://pypi.org/simple" }
@@ -287,6 +293,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "django" },
+    { name = "django-pure-pagination" },
     { name = "fab-classic" },
     { name = "faker" },
     { name = "gunicorn" },
@@ -297,6 +304,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "django", specifier = ">=5.2,<6.0" },
+    { name = "django-pure-pagination", specifier = ">=0.3.0" },
     { name = "fab-classic", specifier = ">=1.21.0" },
     { name = "faker", specifier = ">=40.23.0" },
     { name = "gunicorn", specifier = ">=23.0" },

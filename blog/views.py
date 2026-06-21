@@ -1,13 +1,21 @@
+import collections
+# Python 3.14 兼容：collections.Iterable 已移除
+if not hasattr(collections, 'Iterable'):
+    import collections.abc
+    collections.Iterable = collections.abc.Iterable
+
 import markdown
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import DetailView, ListView
 import re
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
+from pure_pagination.mixins import PaginationMixin
+
 from .models import Post, Category, Tag
 
 
-class IndexView(ListView):
+class IndexView(PaginationMixin, ListView):
     model = Post
     template_name = 'blog/index.html'
     context_object_name = 'post_list'
