@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'pure_pagination',
+    'pure_pagination',  # 分页
+    'haystack',  # 搜索
     'blog.apps.BlogConfig',  # 注册 blog 应用
     'comments.apps.CommentsConfig',  # 注册 comments 应用
 ]
@@ -117,3 +118,17 @@ PAGINATION_SETTINGS = {
     'MARGIN_PAGES_DISPLAYED': 2,
     'SHOW_FIRST_PAGE_WHEN_INVALID': True,
 }
+
+# 搜索设置（URL 通过环境变量 ES_URL 注入，docker-compose 自动配置）
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'blog.elasticsearch2_ik_backend.Elasticsearch2IkSearchEngine',
+        'URL': os.environ.get('ES_URL', 'http://elasticsearch:9200'),
+        'INDEX_NAME': 'rance_blog',
+    },
+}
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 10
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+HAYSTACK_CUSTOM_HIGHLIGHTER = 'blog.utils.Highlighter'
+# HAYSTACK_DEFAULT_OPERATOR = 'AND'
+# HAYSTACK_FUZZY_MIN_SIM = 0.1

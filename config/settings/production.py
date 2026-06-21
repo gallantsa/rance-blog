@@ -5,6 +5,7 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
+# ES_URL 由 docker-compose 的 env_file 注入，见 common.py
 
 CSRF_TRUSTED_ORIGINS = ['*']
 

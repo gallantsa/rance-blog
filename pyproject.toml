@@ -10,4 +10,6 @@ dependencies = [
     "fab-classic>=1.21.0",
     "faker>=40.23.0",
     "django-pure-pagination>=0.3.0",
+    "django-haystack>=3.4.0",
+    "elasticsearch>=7.0.0,<8.0.0",
 ]

@@ -3,6 +3,7 @@ version: '3'
 volumes:
   static:
   database:
+  esdata:
 
 services:
   rance-blog:
@@ -20,6 +21,8 @@ services:
     ports:
       - "8000:8000"
     command: /start.sh
+    depends_on:
+      - elasticsearch
 
   rance-blog-nginx:
     build:
@@ -27,8 +30,31 @@ services:
       dockerfile: compose/production/nginx/Dockerfile
     image: rance-blog-nginx
     container_name: rance-blog-nginx
+    depends_on:
+      - rance-blog
     volumes:
       - static:/app/static
     ports:
       - "80:80"
       - "443:443"
+
+  elasticsearch:
+    build:
+      context: .
+      dockerfile: ./compose/production/elasticsearch/Dockerfile
+    image: rance-blog_elasticsearch
+    container_name: rance-blog_elasticsearch
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nproc: 65536
+      nofile:
+        soft: 65536
+        hard: 65536
