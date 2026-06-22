@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.apps import apps
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -87,3 +89,11 @@ class SearchIndexesTestCase(TestCase):
     def test_index_queryset(self):
         expected_qs = Post.objects.all()
         self.assertQuerySetEqual(self.index_instance.index_queryset(), [repr(p) for p in expected_qs], transform=repr)
+
+    def test_document_count(self):
+        from haystack import connections
+        backend = connections['default'].get_backend()
+        with patch.object(backend, 'conn') as mock_conn:
+            mock_conn.count.return_value = {'count': 42}
+            self.assertEqual(backend.document_count(), 42)
+            mock_conn.count.assert_called_once_with(index=backend.index_name)

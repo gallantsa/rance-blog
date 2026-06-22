@@ -1,6 +1,6 @@
 import collections
 # Python 3.14 兼容：collections.Iterable 已移除
-if not hasattr(collections, 'Iterable'):
+if not hasattr(collections, 'Iterable'):  # pragma: no branch
     import collections.abc
     collections.Iterable = collections.abc.Iterable
 
@@ -60,14 +60,3 @@ class TagView(IndexView):
     def get_queryset(self):
         t = get_object_or_404(Tag, pk=self.kwargs.get('pk'))
         return super().get_queryset().filter(tags=t)
-
-def search(request):
-    q = request.GET.get("q")
-
-    if not q:
-        error_msg = "请输入搜索关键词"
-        messages.add_message(request, messages.ERROR, error_msg, extra_tags="danger")
-        return redirect("blog:index")
-
-    post_list = Post.objects.filter(Q(title__icontains=q) | Q(body__icontains=q))
-    return render(request, "blog/index.html", {"post_list": post_list})
